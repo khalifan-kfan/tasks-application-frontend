@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
 
-const TaskForm = ({ onSubmit, task }) => {
+const TaskForm = ({ onSubmit, task, loading }) => {
+  const formatDeadline = (deadline) => {
+    if (!deadline) return '';
+  
+    if (deadline instanceof Date) {
+      return deadline.toISOString().slice(0, 16);
+    }
+  
+    const parsedDeadline = new Date(deadline);
+    if (isNaN(parsedDeadline.getTime())) {
+      return '';
+    }
+  
+    // Return the deadline in the required format
+    return parsedDeadline.toISOString().slice(0, 16);
+  };
   const [formData, setFormData] = useState({
     title: task ? task.title : '',
     description: task ? task.description : '',
     author: task ? task.author : '',
-    deadline: task ? task.deadline : '',
+    deadline: task ? formatDeadline(task.deadline) : '',
   });
 
   const handleSubmit = (e) => {
@@ -21,10 +36,11 @@ const TaskForm = ({ onSubmit, task }) => {
     });
   };
 
+
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4 text-center">Create New Task</h2>
+        <h2 className="text-lg font-semibold mb-4 text-center">{task ? 'Update Task' : 'Create New Task'}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="title" className="block font-medium">Title</label>
@@ -42,7 +58,7 @@ const TaskForm = ({ onSubmit, task }) => {
             <label htmlFor="deadline" className="block font-medium">Deadline</label>
             <input type="datetime-local" id="deadline" name="deadline" required className="mt-1 p-2 border rounded w-full" value={formData.deadline} onChange={handleChange} />
           </div>
-          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded w-full">Create Task</button>
+          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded w-full">{loading ? 'Loading...':task ? 'Update Task' : 'Create Task'}</button>
         </form>
       </div>
     </div>

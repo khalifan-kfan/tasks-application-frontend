@@ -17,7 +17,7 @@ const TaskCard = ({ task }) => {
   };
 
   return (
-    <Link to={`/view/${task._id}`}>
+    <Link to={`/view/${task._id.$oid}`}>
     <div style={cardStyle} className=" rounded-lg shadow-md overflow-hidden">
       <div >
         <div className="p-4">
