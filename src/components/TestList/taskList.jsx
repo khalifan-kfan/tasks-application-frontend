@@ -7,11 +7,19 @@ import Pagination from "../../components/Pagination";
 
 const TaskList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { tasks, loading, error, fetchData } = useFetchTasks(`api/tasks?page=${currentPage}`);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState(null);
+  const generateFilterQueryString = () => {
+    if (!selectedFilter) return "";
+    return `&${selectedFilter}=${searchQuery}`;
+  };
 
+  const { tasks, loading, error, fetchData } = useFetchTasks(
+    `api/tasks?page=${currentPage}${generateFilterQueryString()}`
+  );
   useEffect(() => {
     fetchData();
-  }, [currentPage]);
+  }, [currentPage,selectedFilter,searchQuery]);
 
   const nextPage = () => {
     if (tasks.pagination && currentPage < tasks.pagination.total_pages) {
@@ -24,6 +32,18 @@ const TaskList = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleFilterChange = (filter) => {
+    if (selectedFilter === filter) {
+      setSelectedFilter(null);
+    } else {
+      setSelectedFilter(filter);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-4xl my-8">
@@ -34,6 +54,42 @@ const TaskList = () => {
         </Link>
       </div>
       <hr className="mb-4" />
+      <div className="flex flex-col mb-[1rem]">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="mr-2 px-2 py-1 border border-gray-300 rounded"
+        />
+        <label >
+          <input
+            type="checkbox"
+            className="mr-2"
+            checked={selectedFilter === "title"}
+            onChange={() => handleFilterChange("title")}
+          />
+          <>Title</>
+        </label>
+        <label >
+          <input
+            type="checkbox"
+            className="mr-2"
+            checked={selectedFilter === "author"}
+            onChange={() => handleFilterChange("author")}
+          />
+          <>Author</>
+        </label>
+        <label >
+          <input
+            type="checkbox"
+            className="mr-2"
+            checked={selectedFilter === "description"}
+            onChange={() => handleFilterChange("description")}
+          />
+          Description
+        </label>
+      </div>
       {loading && (
         <div className="w-[100%] flex items-center justify-center">
           <DotsLoader />
@@ -57,7 +113,9 @@ const TaskList = () => {
           totalPages={tasks.pagination.total_pages}
           prevPage={prevPage}
           nextPage={nextPage}
-          specificPage={(page)=>{setCurrentPage(page)}}
+          specificPage={(page) => {
+            setCurrentPage(page);
+          }}
         />
       )}
     </div>
