@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom'; // Import MemoryRouter
+import { MemoryRouter } from 'react-router-dom';
 import TaskCard from './taskCard';
 
 describe('TaskCard component', () => {
@@ -12,7 +12,7 @@ describe('TaskCard component', () => {
 
   it('renders task title and author', () => {
     render(
-      <MemoryRouter> {/* Wrap the component with MemoryRouter */}
+      <MemoryRouter> 
         <TaskCard task={mockTask} />
       </MemoryRouter>
     );
