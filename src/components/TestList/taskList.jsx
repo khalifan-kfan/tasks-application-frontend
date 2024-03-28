@@ -19,7 +19,7 @@ const TaskList = () => {
   );
   useEffect(() => {
     fetchData();
-  }, [currentPage, selectedFilter, searchQuery]);
+  }, [currentPage, searchQuery]);
 
   const nextPage = () => {
     if (tasks.pagination && currentPage < tasks.pagination.total_pages) {
